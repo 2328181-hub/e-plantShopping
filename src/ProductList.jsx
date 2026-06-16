@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from 'react-redux';
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addItem } from './CartSlice'; // Ensure this matches your CartSlice file name and location
@@ -6,6 +7,8 @@ import CartItem from './CartItem';
 import './ProductList.css'
 import CartItem from './CartItem';
 function ProductList({ onHomeClick }) {
+    const cartItems = useSelector(state => state.cart.items);
+    const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
     const dispatch = useDispatch();
@@ -277,7 +280,14 @@ function ProductList({ onHomeClick }) {
                             </div>
                         </a>
                     </div>
-
+<div className="cart" onClick={() => setShowCart(true)}>
+                <a href="#">
+                    <h1 className="cart-icon" style={{ color: 'white', margin: 0 }}>🛒</h1>
+                    <span className="cart-quantity-count" style={{ color: 'white', marginLeft: '5px' }}>
+                        {totalQuantity}
+                    </span>
+                </a>
+            </div>
                 </div>
                 <div className="product-grid">
     {/* LOOP 1: This loops through each category object in your plantsArray */}
