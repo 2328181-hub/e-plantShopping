@@ -7,29 +7,55 @@ const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
 
-  // Calculate total amount for all products in the cart
-  const calculateTotalAmount = () => {
- 
-  };
+  
+  // 1. Calculate the total cost of all items in the cart
+    const calculateTotalAmount = () => {
+        return cart.reduce((total, item) => {
+            const costNum = parseFloat(item.cost.substring(1));
+            return total + (costNum * item.quantity);
+        }, 0);
+    };
 
-  const handleContinueShopping = (e) => {
-   
-  };
+    // 6. Calculate subtotal cost for a single item type
+    const calculateTotalCost = (item) => {
+        const costNum = parseFloat(item.cost.substring(1));
+        return costNum * item.quantity;
+    };
 
+    // 2. Continue Shopping handler
+    const handleContinueShopping = (e) => {
+        if (onContinueShopping) {
+            onContinueShopping(e);
+        }
+    };
 
+    // 3. Checkout placeholder handler
+    const handleCheckoutShopping = (e) => {
+        alert('Functionality to be added for future reference');
+    };
+    // 4. Increment quantity handler
+    const handleIncrement = (item) => {
+        dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
+    };
 
-  const handleIncrement = (item) => {
-  };
+    // 4. Decrement quantity handler with boundary check
+    const handleDecrement = (item) => {
+        if (item.quantity > 1) {
+            dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+        } else {
+            // If dropping to 0, completely remove the plant from the array
+            dispatch(removeItem(item.name));
+        }
+    };
 
-  const handleDecrement = (item) => {
-   
-  };
-
-  const handleRemove = (item) => {
-  };
-
+    // 5. Remove plant variant entirely from cart
+    const handleRemove = (item) => {
+        dispatch(removeItem(item.name));
+    };
   // Calculate total cost based on quantity for an item
-  const calculateTotalCost = (item) => {
+    const calculateTotalCost = (item) => {
+        const costNum = parseFloat(item.cost.substring(1));
+        return costNum * item.quantity;
   };
 
   return (
@@ -57,7 +83,7 @@ const CartItem = ({ onContinueShopping }) => {
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={(e) => handleCheckoutShopping(e)}>Checkout</button>
       </div>
     </div>
   );
