@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { addItem } from './CartSlice'; // Ensure this matches your CartSlice file name and location
+import './ProductList.css';
+import CartItem from './CartItem';
 import './ProductList.css'
 import CartItem from './CartItem';
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-
+    const dispatch = useDispatch();
+    const [addedToCart, setAddedToCart] = useState({});
+    const handleAddToCart = (plant) => {
+        dispatch(addItem(plant));
+        setAddedToCart((prevState) => ({
+            ...prevState,
+            [plant.name]: true,
+        }));
+    };
     const plantsArray = [
         {
             category: "Air Purifying Plants",
@@ -267,6 +279,38 @@ function ProductList({ onHomeClick }) {
                     </div>
 
                 </div>
+                <div className="product-grid">
+    {/* LOOP 1: This loops through each category object in your plantsArray */}
+    {plantsArray.map((categoryObj, categoryIndex) => (
+        <div key={categoryIndex} className="category-section">
+            {/* Displays the category title (e.g., "Air Purifying Plants") */}
+            <h2 className="category-title">{categoryObj.category}</h2>
+            
+            <div className="category-plants-grid">
+                {/* LOOP 2: This loops through the inner 'plants' array for this specific category */}
+                {categoryObj.plants.map((plant, plantIndex) => (
+                    <div key={plantIndex} className="product-card">
+                        {/* Displays the individual plant details */}
+                        <img className="product-image" src={plant.image} alt={plant.name} />
+                        <div className="product-name">{plant.name}</div>
+                        <div className="product-description">{plant.description}</div>
+                        <div className="product-cost">{plant.cost}</div>
+                        
+                        {/* The interactive Add to Cart button */}
+                        <button 
+                            className="add-to-cart-button" 
+                            onClick={() => handleAddToCart(plant)}
+                            disabled={addedToCart[plant.name]} // Disables button if already clicked
+                        >
+                            {/* Dynamically changes text based on local state */}
+                            {addedToCart[plant.name] ? "Added to Cart" : "Add to Cart"}
+                        </button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    ))}
+</div>
                 <div style={styleObjUl}>
                     <div> <a href="#" onClick={(e) => handlePlantsClick(e)} style={styleA}>Plants</a></div>
                     <div> <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}><h1 className='cart'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" id="IconChangeColor" height="68" width="68"><rect width="156" height="156" fill="none"></rect><circle cx="80" cy="216" r="12"></circle><circle cx="184" cy="216" r="12"></circle><path d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8" fill="none" stroke="#faf9f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" id="mainIconPathAttribute"></path></svg></h1></a></div>
